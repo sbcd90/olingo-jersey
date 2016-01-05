@@ -10,7 +10,7 @@
 
     <servlet>
         <servlet-name>OlingoServlet</servlet-name>
-        <servlet-class>com.sap.iotas.OlingoApplication</servlet-class>
+        <servlet-class>com.sap.iotas.service.OlingoApplication</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

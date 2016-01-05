@@ -31,7 +31,7 @@
     </pluginRepositories>
 
     <properties>
-        <odata.version>4.0.0-beta-01</odata.version>
+        <odata.version>4.0.0</odata.version>
     </properties>
 
     <dependencies>
