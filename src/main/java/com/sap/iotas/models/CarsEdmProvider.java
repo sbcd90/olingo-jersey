@@ -78,4 +78,11 @@ public class CarsEdmProvider extends CsdlAbstractEdmProvider {
 
         return container;
     }
+
+    @Override
+    public CsdlEntityContainerInfo getEntityContainerInfo(FullQualifiedName entityContainerName) throws ODataException {
+        if(entityContainerName == null || entityContainerName.equals(CONTAINER_FQN))
+            return new CsdlEntityContainerInfo().setContainerName(CONTAINER_FQN);
+        return null;
+    }
 }
