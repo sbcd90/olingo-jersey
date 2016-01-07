@@ -55,12 +55,7 @@ public class CarServiceImpl {
     })
     public ResponseCreator getCars() {
         try {
-            HttpSession session = httpServletRequest.getSession(true);
-            DummyDataProvider dataProvider = (DummyDataProvider) session.getAttribute(DummyDataProvider.class.getName());
-            if(dataProvider == null) {
-                dataProvider = new DummyDataProvider();
-                session.setAttribute(DummyDataProvider.class.getName(), dataProvider);
-            }
+            DummyDataProvider dataProvider = new DummyDataProvider();
 
             /**
              * choose appropriate Olingo Processor
