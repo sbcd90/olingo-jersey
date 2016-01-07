@@ -1,4 +1,4 @@
-package com.sap.iotas.utils;
+package com.sap.rest.utils;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.edm.EdmEnumType;

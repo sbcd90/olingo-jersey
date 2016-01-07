@@ -1,5 +1,5 @@
 
-package com.sap.iotas.support;
+package com.sap.rest.support;
 
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Link.Builder;

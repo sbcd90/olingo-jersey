@@ -1,13 +1,12 @@
-package com.sap.iotas.models;
+package com.sap.rest.models;
 
-import com.sap.iotas.utils.DummyDataProvider;
-import com.sap.iotas.utils.FilterExpressionVisitor;
+import com.sap.rest.utils.DummyDataProvider;
+import com.sap.rest.utils.FilterExpressionVisitor;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.*;
 import org.apache.olingo.server.api.processor.EntityCollectionProcessor;

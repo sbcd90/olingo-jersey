@@ -1,6 +1,6 @@
-package com.sap.iotas.utils;
+package com.sap.rest.utils;
 
-import com.sap.iotas.support.ResponseWrapper;
+import com.sap.rest.support.ResponseWrapper;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;

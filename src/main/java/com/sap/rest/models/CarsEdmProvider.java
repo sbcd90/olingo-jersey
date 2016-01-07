@@ -1,4 +1,4 @@
-package com.sap.iotas.models;
+package com.sap.rest.models;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;

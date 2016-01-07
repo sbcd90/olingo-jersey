@@ -1,9 +1,9 @@
-package com.sap.iotas.service;
+package com.sap.rest.service;
 
-import com.sap.iotas.models.CarsEdmProvider;
-import com.sap.iotas.models.DataEntityCollectionProcessor;
-import com.sap.iotas.utils.DummyDataProvider;
-import com.sap.iotas.utils.ResponseCreator;
+import com.sap.rest.models.CarsEdmProvider;
+import com.sap.rest.models.DataEntityCollectionProcessor;
+import com.sap.rest.utils.DummyDataProvider;
+import com.sap.rest.utils.ResponseCreator;
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataHttpHandler;
@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;

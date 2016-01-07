@@ -1,4 +1,4 @@
-package com.sap.iotas.service;
+package com.sap.rest.service;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
