@@ -19,6 +19,7 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,6 +28,8 @@ public class DataEntityCollectionProcessor implements EntityCollectionProcessor 
     private OData oData;
     private ServiceMetadata serviceMetadata;
     private static final Logger logger = LoggerFactory.getLogger(DataEntityCollectionProcessor.class);
+
+    private InputStream content;
 
     public DataEntityCollectionProcessor(DummyDataProvider dataProvider) {
         this.dataProvider = dataProvider;
@@ -52,9 +55,15 @@ public class DataEntityCollectionProcessor implements EntityCollectionProcessor 
         SerializerResult serializerResult = serializer.entityCollection(serviceMetadata, edmEntitySet.getEntityType(), entityCollection, options);
 
 
-        oDataResponse.setContent(serializerResult.getContent());
-        oDataResponse.setStatusCode(HttpStatusCode.OK.getStatusCode());
-        oDataResponse.setHeader(HttpHeader.CONTENT_TYPE, contentType.toContentTypeString());
+        setContent(serializerResult.getContent());
+    }
+
+    public void setContent(InputStream content) {
+        this.content = content;
+    }
+
+    public InputStream getContent() {
+        return content;
     }
 
     private EdmEntitySet getEdmEntitySet(UriInfoResource uriInfoResource) throws ODataApplicationException {
