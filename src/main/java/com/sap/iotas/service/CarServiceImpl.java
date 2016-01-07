@@ -10,25 +10,31 @@ import org.apache.olingo.server.api.edmx.EdmxReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import java.util.ArrayList;
 
-@WebServlet("/*")
-public class OlingoApplication extends HttpServlet {
+@Path("/")
+public class CarServiceImpl {
+    @Context
+    private HttpServletRequest httpServletRequest;
+    @Context
+    private HttpServletResponse httpServletResponse;
+    private static final Logger logger = LoggerFactory.getLogger(CarServiceImpl.class);
 
-    private static final Long serialVersionUID = 1L;
-    private static final Logger logger = LoggerFactory.getLogger(OlingoApplication.class);
-
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @GET
+    @Path("Cars")
+    @Produces({
+            "application/json"
+    })
+    public void getCars() {
         try {
-            HttpSession session = req.getSession(true);
+            HttpSession session = httpServletRequest.getSession(true);
             DummyDataProvider dataProvider = (DummyDataProvider) session.getAttribute(DummyDataProvider.class.getName());
             if(dataProvider == null) {
                 dataProvider = new DummyDataProvider();
@@ -41,10 +47,18 @@ public class OlingoApplication extends HttpServlet {
             ODataHttpHandler handler = oData.createHandler(edm);
 
             handler.register(new DataEntityCollectionProcessor(dataProvider));
-            handler.process(req, resp);
-
+            handler.process(httpServletRequest, httpServletResponse);
         } catch (RuntimeException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    @GET
+    @Path("dummy")
+    @Produces({
+            "text/html"
+    })
+    public String getDummy() {
+        return "Hello World";
     }
 }
