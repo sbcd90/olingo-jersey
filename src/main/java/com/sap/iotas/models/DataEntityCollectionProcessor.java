@@ -1,7 +1,9 @@
 package com.sap.iotas.models;
 
 import com.sap.iotas.utils.DummyDataProvider;
+import com.sap.iotas.utils.FilterExpressionVisitor;
 import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -16,10 +18,14 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.queryoption.FilterOption;
+import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
+import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +52,29 @@ public class DataEntityCollectionProcessor implements EntityCollectionProcessor 
         EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
 
         EntityCollection entityCollection = dataProvider.readAll(edmEntitySet);
+        List<Entity> entityList = entityCollection.getEntities();
+        Iterator<Entity> entityIterator = entityList.iterator();
+
+        FilterOption filterOption = uriInfo.getFilterOption();
+        if(filterOption != null) {
+            Expression filterExpression = filterOption.getExpression();
+            try {
+                while (entityIterator.hasNext()) {
+                    Entity currentEntity = entityIterator.next();
+                    FilterExpressionVisitor expressionVisitor = new FilterExpressionVisitor(currentEntity);
+
+                    Object visitorResult = filterExpression.accept(expressionVisitor);
+                    if(visitorResult instanceof Boolean) {
+                        if (!Boolean.TRUE.equals(visitorResult))
+                            entityIterator.remove();
+                    }
+                    else
+                        throw new ODataApplicationException("A filter expression must evaulate to type Edm.Boolean", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ENGLISH);
+                }
+            } catch (ExpressionVisitException e) {
+                logger.error(e.getMessage());
+            }
+        }
 
         ODataSerializer serializer = oData.createSerializer(contentType);
         ContextURL contextURL = ContextURL.with().entitySet(edmEntitySet).build();
