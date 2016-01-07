@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sap.appiot</groupId>
-    <artifactId>olingo</artifactId>
+    <artifactId>olingo-jersey</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
