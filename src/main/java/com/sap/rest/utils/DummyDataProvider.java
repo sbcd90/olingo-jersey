@@ -11,31 +11,53 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class DummyDataProvider {
-    private Map<String, EntityCollection> data;
+    private String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+    private String protocol = "jdbc:derby:";
+    private String dbName;
+    private Connection connection;
     private static final Logger logger = LoggerFactory.getLogger(DummyDataProvider.class);
 
-    public DummyDataProvider() {
-        data = new HashMap<>();
-        data.put("Cars", createCars());
+    public DummyDataProvider() throws SQLException {
+        dbName = "derbyDB";
+
+        initializeConnection();
+        createCarsTable();
+        createCars();
+        connection.commit();
     }
 
-    private EntityCollection createCars() {
-        EntityCollection entitySet = new EntityCollection();
+    private void initializeConnection() throws SQLException {
+        Properties properties = new Properties();
+        properties.put("user", "user1");
+        properties.put("password", "user1");
 
-        Entity entity1 = new Entity().addProperty(createPrimitive("Id", 1)).addProperty(createPrimitive("Model", "Maruti"));
-        entity1.setId(createId("Cars", 1));
-        entitySet.getEntities().add(entity1);
+        connection = DriverManager.getConnection(protocol + dbName + ";create=true", properties);
 
-        Entity entity2 = new Entity().addProperty(createPrimitive("Id", 2)).addProperty(createPrimitive("Model", "Hyundai"));
-        entity2.setId(createId("Cars", 2));
-        entitySet.getEntities().add(entity2);
+        Statement statement = connection.createStatement();
+        statement.execute("drop table Cars");
+    }
 
-        return entitySet;
+    private void createCarsTable() throws SQLException {
+        Statement statement = connection.createStatement();
+        statement.execute("create table Cars(id int, model varchar(40))");
+    }
+
+    private void createCars() throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into Cars values(?, ?)");
+        preparedStatement.setInt(1, 1);
+        preparedStatement.setString(2, "Maruti");
+        preparedStatement.executeUpdate();
+
+        preparedStatement.setInt(1, 2);
+        preparedStatement.setString(2, "Hyundai");
+        preparedStatement.executeUpdate();
     }
 
     private Property createPrimitive(String name, Object value) {
@@ -51,11 +73,22 @@ public class DummyDataProvider {
         return null;
     }
 
-    public EntityCollection readAll(EdmEntitySet edmEntitySet) {
-        return data.get(edmEntitySet.getName());
+    public EntityCollection readAll(EdmEntitySet edmEntitySet) throws SQLException {
+        Statement statement = connection.createStatement();
+
+        ResultSet rs = statement.executeQuery("SELECT id, model FROM Cars ORDER BY id");
+        EntityCollection entityCollection = new EntityCollection();
+
+        while (rs.next()) {
+            Entity entity = new Entity().addProperty(createPrimitive("Id", rs.getInt(1))).addProperty(createPrimitive("Model", rs.getString(2)));
+            entity.setId(createId("Cars", rs.getInt(1)));
+            entityCollection.getEntities().add(entity);
+        }
+
+        return entityCollection;
     }
 
-    public Entity read(EdmEntitySet edmEntitySet, List<UriParameter> parameters) {
+    public Entity read(EdmEntitySet edmEntitySet, List<UriParameter> parameters) throws SQLException {
         EdmEntityType entityType = edmEntitySet.getEntityType();
 
         EntityCollection entitySet = readAll(edmEntitySet);

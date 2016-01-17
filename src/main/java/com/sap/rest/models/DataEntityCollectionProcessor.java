@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -49,8 +50,13 @@ public class DataEntityCollectionProcessor implements EntityCollectionProcessor 
     @Override
     public void readEntityCollection(ODataRequest oDataRequest, ODataResponse oDataResponse, UriInfo uriInfo, ContentType contentType) throws ODataApplicationException, ODataLibraryException {
         EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+        EntityCollection entityCollection = null;
 
-        EntityCollection entityCollection = dataProvider.readAll(edmEntitySet);
+        try {
+            entityCollection = dataProvider.readAll(edmEntitySet);
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
         List<Entity> entityList = entityCollection.getEntities();
         Iterator<Entity> entityIterator = entityList.iterator();
 

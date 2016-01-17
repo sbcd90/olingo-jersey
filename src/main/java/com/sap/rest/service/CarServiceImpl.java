@@ -13,6 +13,7 @@ import org.apache.olingo.server.api.processor.EntityCollectionProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -23,6 +24,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 @Path("/")
@@ -31,7 +33,13 @@ public class CarServiceImpl {
     private HttpServletRequest httpServletRequest;
     @Context
     private HttpServletResponse httpServletResponse;
+    private DummyDataProvider dataProvider;
     private static final Logger logger = LoggerFactory.getLogger(CarServiceImpl.class);
+
+    @Inject
+    public CarServiceImpl(DummyDataProvider dummyDataProvider) {
+        this.dataProvider = dummyDataProvider;
+    }
 
     private ODataHttpHandler prepareHandler() {
         OData oData = OData.newInstance();
@@ -52,10 +60,8 @@ public class CarServiceImpl {
     @Produces({
             "application/json"
     })
-    public ResponseCreator getCars() {
+    public ResponseCreator getCars() throws SQLException {
         try {
-            DummyDataProvider dataProvider = new DummyDataProvider();
-
             /**
              * choose appropriate Olingo Processor
              */
